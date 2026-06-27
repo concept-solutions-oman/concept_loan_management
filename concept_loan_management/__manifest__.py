@@ -18,7 +18,7 @@
     'author': 'Concept Solutions LLC',
     'website': 'https://www.csloman.com',
     'license': 'LGPL-3',
-    'price': 56.09,
+    'price': 20.09,
     'currency': 'USD',
     'depends': ['account'],
     'data': [
