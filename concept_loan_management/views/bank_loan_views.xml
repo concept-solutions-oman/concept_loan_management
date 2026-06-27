@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_concept_bank_loan_tree" model="ir.ui.view">
+        <field name="name">concept.bank.loan.tree</field>
+        <field name="model">concept.bank.loan</field>
+        <field name="arch" type="xml">
+            <tree string="Bank Loans">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="vendor_id" optional="hide"/>
+                <field name="loan_amount"/>
+                <field name="total_interest_amount"/>
+                <field name="gross_amount"/>
+                <field name="duration_months"/>
+                <field name="flat_rate"/>
+                <field name="account_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_concept_bank_loan_form" model="ir.ui.view">
+        <field name="name">concept.bank.loan.form</field>
+        <field name="model">concept.bank.loan</field>
+        <field name="arch" type="xml">
+            <form string="Bank Loan">
+                <header>
+                    <button name="action_compute_schedule" string="Compute Schedule" type="object" class="oe_highlight" invisible="state in ('posted', 'pdc')"/>
+                    <button name="action_create_entry" string="Create Entry" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_create_pdc" string="Create PDC" type="object" class="oe_highlight" invisible="state != 'posted' or not is_pdc_installed"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted,pdc"/>
+                </header>
+                <sheet>
+                    <field name="is_pdc_installed" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_journal_entry"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-bars"
+                                invisible="not move_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Journal Entry</span>
+                            </div>
+                        </button>
+                        <button name="action_view_pdc"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                                invisible="not is_pdc_installed or pdc_count == 0">
+                            <div class="o_stat_info">
+                                <field name="pdc_count" widget="statinfo" string="PDCs"/>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="journal_id" readonly="state == 'posted'"/>
+                            <field name="partner_id" readonly="state == 'posted'"/>
+                            <field name="vendor_id" readonly="state == 'posted'"/>
+                            <field name="loan_amount" readonly="state == 'posted'"/>
+                            <field name="total_interest_amount" readonly="state == 'posted'"/>
+                            <field name="gross_amount" readonly="1" force_save="1"/>
+                            <field name="account_id" readonly="state == 'posted'"/>
+                        </group>
+                        <group>
+                            <field name="disbursal_date" readonly="state == 'posted'"/>
+                            <field name="date" readonly="state == 'posted'"/>
+                            <field name="duration_months" readonly="state == 'posted'"/>
+                            <field name="rate_type" readonly="state == 'posted'" widget="radio"/>
+                            <field name="flat_rate" readonly="state == 'posted'" invisible="rate_type != 'flat'"/>
+                            <field name="indicative_effective_rate" readonly="state == 'posted'" invisible="rate_type != 'effective'"/>
+                            <field name="fixed_amount" readonly="state == 'posted'"/>
+                            <field name="fixed_amount_value" invisible="not fixed_amount" required="fixed_amount" readonly="state == 'posted'"/>
+                            <field name="move_id" readonly="1" invisible="not move_id"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Monthly Details">
+                            <field name="line_ids" readonly="state == 'posted'">
+                                <tree editable="bottom">
+                                    <field name="month_date" string="dd/mm/yy"/>
+                                    <field name="total_amount" sum="Total"/>
+                                    <field name="interest_amount" sum="Total Interest"/>
+                                    <field name="amount" sum="Total Principal"/>
+                                    <field name="balance_amount"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_concept_bank_loan" model="ir.actions.act_window">
+        <field name="name">Bank Loans</field>
+        <field name="res_model">concept.bank.loan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_concept_bank_loan_root"
+              name="Loan Management"
+              web_icon="concept_loan_management,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="menu_concept_bank_loan"
+              name="Bank Loans"
+              parent="menu_concept_bank_loan_root"
+              action="action_concept_bank_loan"
+              sequence="10"/>
+
+</odoo>

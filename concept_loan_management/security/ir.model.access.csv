@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_concept_bank_loan,concept.bank.loan,model_concept_bank_loan,base.group_user,1,1,1,1
+access_concept_bank_loan_line,concept.bank.loan.line,model_concept_bank_loan_line,base.group_user,1,1,1,1
